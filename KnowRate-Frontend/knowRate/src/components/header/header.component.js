@@ -15,9 +15,14 @@ class Header extends React.Component {
         return !this.state.open ? "Header" : "Header header-content-mobile";
     }
 
+    getMobileListClassName = () => {
+        return !this.state.open ? "mobile-list" : "mobile-list mobile-list-closed";
+    }
+
     render() {
          let contentClassName = this.getContentClassName();
-         let mobileList = this.state.open ? <DropDownHeader /> : null;
+         let listClassName = this.getMobileListClassName();
+         let mobileList = this.state.open ? <DropDownHeader listClass={listClassName} /> : null;
          return (
             <div className={contentClassName}>
                 <div className="header-content">
@@ -36,9 +41,9 @@ class Header extends React.Component {
     }
 }
 
-const DropDownHeader = () => {
+const DropDownHeader = (props) => {
     return (
-        <div className="mobile-list">
+        <div className={props.listClass}>
            <ul className="mobile-list-container">
                 <li className="header-join header-join-mobile"><a>Log In</a></li>
                 <li className="header-join header-join-mobile"><a>Join</a></li>
