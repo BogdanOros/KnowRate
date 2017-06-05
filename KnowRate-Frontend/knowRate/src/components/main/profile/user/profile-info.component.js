@@ -6,21 +6,13 @@ import React from 'react';
 import { Card, Icon, Image, Item } from 'semantic-ui-react'
 import { Rating, Button } from 'semantic-ui-react'
 
-import "../profile.style.sass";
 
 export default class ProfileInfo extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            user: {
-                name: "Bogdan Oros",
-                joined: "2015",
-                interests: "Bogdan is a jedi living in Nashville."
-            },
-            friends: {
-                count: 22
-            }
+           user: props.user
         }
     }
 
@@ -31,21 +23,21 @@ export default class ProfileInfo extends React.Component {
                     <Image className="user-img" src='https://cdn0.iconfinder.com/data/icons/user-pictures/100/matureman1-512.png' />
                     <Card.Content>
                         <Card.Header>
-                            {this.state.user.name}
+                            {this.state.user.firstName + ' ' + this.state.user.lastName}
                         </Card.Header>
                         <Card.Meta>
                             <span className='date'>
-                              {this.state.user.joined}
+                              {this.state.user.birthDate}
                             </span>
                         </Card.Meta>
                         <Card.Description>
-                            {this.state.user.interests}
+                            {this.state.user.description}
                         </Card.Description>
                     </Card.Content>
                     <Card.Content extra>
                         <a>
                             <Icon name='user' />
-                            {this.state.friends.count}
+                            {this.state.user.accounts.length}
                         </a>
                     </Card.Content>
                 </Card>

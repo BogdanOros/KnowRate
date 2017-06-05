@@ -6,6 +6,10 @@ import '../login/material-input.css';
 
 import '../login/login.style.sass';
 
+import axios from 'axios';
+import user from './../user/user';
+import {reactLocalStorage} from 'reactjs-localstorage';
+
 import EventEmitter from './../../emitter';
 
 class LoginDialog extends React.Component {
@@ -16,6 +20,7 @@ class LoginDialog extends React.Component {
             modalIsOpen: false,
             isLoginState: true,
             login: {
+                value: null,
                 valid: true,
                 requirements: {
                     max: 26,
@@ -24,6 +29,7 @@ class LoginDialog extends React.Component {
                 }
             },
             password: {
+                value: null,
                 valid: true,
                 requirements: {
                     max: 10,
@@ -64,13 +70,26 @@ class LoginDialog extends React.Component {
     }
 
     loginClicked = (event) => {
-        console.log(event);
+        console.log(this.state);
         if (this.state.login.valid && this.state.password.valid)
-            EventEmitter.emit("login");
+            axios.get("http://localhost:8080/api/auth", {
+                params : {
+                    username: this.state.login.value,
+                    password: this.state.password.value
+                }
+            }).then((response) => {
+                user.setUser(response.data);
+                console.log(user.getUser());
+                reactLocalStorage.set("email", user.getUser().email);
+                reactLocalStorage.set("password", user.getUser().password);
+                EventEmitter.emit("login");
+            });
+
     };
 
     validate = (value, field, name) => {
         let requiements = field.requirements;
+        field.value = value;
         if (value.length > requiements.max || value.length < requiements.min) {
             field.valid = false;
             this.setState({[name]: field});
@@ -154,13 +173,13 @@ class LoginDialog extends React.Component {
                     />
                     <hr className="divider"/>
                     <div className="group">
-                        <input type="text" required onChange={(event) => this.validate(event.target.value, this.state.login)} />
+                        <input type="text" required onChange={(event) => this.validate(event.target.value, this.state.login, "login")} />
                         <span className="highlight"/>
                         <span className={this.state.login.valid ? "bar" : "bar error"}/>
                         <label>Email</label>
                     </div>
                     <div className="group">
-                        <input type="password" required />
+                        <input type="password" required onChange={(event) => this.validate(event.target.value, this.state.password, "password")} />
                         <span className="highlight"/>
                         <span className={this.state.password.valid ? "bar" : "bar error"}/>
                         <label>Password</label>

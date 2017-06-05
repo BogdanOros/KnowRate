@@ -8,12 +8,34 @@ import Header from './components/header/header.component';
 import MainHeader from './components/main/MainHeader.component';
 
 import EventEmitter from './emitter';
+import axios from 'axios';
+
+import user from './components/user/user';
+
+import {reactLocalStorage} from 'reactjs-localstorage';
 
 class App extends Component {
   constructor(props) {
     super(props);
+    let auth = false;
+    if (reactLocalStorage.get("email") !== null) {
+        auth = true;
+        console.log(reactLocalStorage.get("email"));
+        axios.get("http://localhost:8080/api/auth", {
+            params: {
+                username: reactLocalStorage.get("email"),
+                password: reactLocalStorage.get("password")
+            }
+        }).then((response) => {
+            user.setUser(response.data);
+            reactLocalStorage.set("email", user.getUser().email);
+            reactLocalStorage.set("password", user.getUser().password);
+            EventEmitter.emit("login");
+        });
+
+    }
     this.state = {
-      authorized: false
+        authorized: auth
     };
     EventEmitter.on('logout', this.unAuthorize);
     EventEmitter.on('login', this.authorize);

@@ -5,7 +5,7 @@ import Profile from './profile/profile.component';
 import Main from './central/main.component';
 
 import EventEmitter from './../../emitter';
-
+import {reactLocalStorage} from 'reactjs-localstorage';
 export default class MainHeader extends Component {
     state = { activeItem: 'main' };
     handleItemClick = (e, { name }) => this.setState({ activeItem: name })
@@ -28,8 +28,10 @@ export default class MainHeader extends Component {
                     <Menu.Menu position='right'>
                         <Dropdown item text='Options'>
                             <Dropdown.Menu>
-                                <Dropdown.Item>Contacts</Dropdown.Item>
-                                <Dropdown.Item onClick={()=>  {EventEmitter.emit('logout', null)}}>Logout</Dropdown.Item>
+                                <Dropdown.Item onClick={()=>  { EventEmitter.emit('logout', null);
+                                    reactLocalStorage.set("email", null);
+                                    reactLocalStorage.set("password", null);
+                                    }}>Logout</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                     </Menu.Menu>
